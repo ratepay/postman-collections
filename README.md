@@ -1,8 +1,8 @@
-# Postman Collection
+# Postman Collections
 
-You can use the following Postman collection to interact with the **Ratepay APIs** in the **integration environment**.
+You can use the following Postman collections to interact with the **Ratepay APIs** in the **integration environment**.
 
-The collection covers common payment flows and can be used as a reference or starting point for custom integrations.
+The collections cover common payment flows and can be used as a reference or starting point for custom integrations.
 
 ## Covered APIs
 
@@ -35,12 +35,12 @@ The collection covers common payment flows and can be used as a reference or sta
 
 ## Getting Started
 
-### 1. Import the Collection
+### 1. Import the Collections
 Import the `Ratepay Payment API 2.0 (Integration).postman_collection.json` and/or `Ratepay Payment API 1.8 (Integration).postman_collection.json` into Postman.
 
 ### 2. Test Data & Credentials
 
-This collection comes with generally available public credentials & is ready-to-use.
+The collections comes with generally available public credentials & is ready-to-use.
 
 All other variables (tokens, IDs) are set automatically by test scripts.
 
@@ -66,4 +66,4 @@ The access token is automatically stored and reused by subsequent requests.
 ## Notes
 Base URLs point to the integration environment
 
-The collection is intended for demonstration and testing purposes
+This collections are intended for demonstration and testing purposes
