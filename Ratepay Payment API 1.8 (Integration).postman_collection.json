@@ -1,0 +1,934 @@
+{
+  "info": {
+    "_postman_id": "dda464ae-c7ae-446d-871c-8b42c0b90c46",
+    "name": "Ratepay Payment API 1.8 (Integration)",
+    "description": "## Ratepay Payment API 1.8 – Postman Collection (Integration)\n\nThis collection demonstrates the following Ratepay APIs:\n\n- Payment API 1.8\n    \n- Transaction Status API\n    \n\nAll credentials, which are by default included, are integration credentials and publicly available. The collection stores variables, based on the responses of requests - to proceed sucessfully & an easy way in follow up requests.\n\nFurther integration details can be found at [docs.ratepay.com](https://docs.ratepay.com/).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "10912000"
+  },
+  "item": [
+    {
+      "name": "Payment API 1.8",
+      "item": [
+        {
+          "name": "0 - ⚙️ PROFILE_REQUEST",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>myshop</system-id>\r\n\t\t<operation>PROFILE_REQUEST</operation>\t\t\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t</head>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/profile_request](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/profile_request)"
+          },
+          "response": []
+        },
+        {
+          "name": "0 - ⚙️ CONFIGURATION_REQUEST [for Pay in 3]",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n    <head>\r\n        <system-id>MyTestsystem</system-id> \r\n\t    <operation>CONFIGURATION_REQUEST</operation>\r\n\t    <credential>\r\n\t\t    <profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t    <securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t    </credential>\r\n\t</head>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/configuration_request](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/configuration_request)"
+          },
+          "response": []
+        },
+        {
+          "name": "0 - ⚙️ CALCULATION_REQUEST [for Pay in 3]",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonResponse = xml2Json(pm.response.text());\r",
+                  "\r",
+                  "const totalAmount = jsonResponse.response.content[\"installment-calculation-result\"][\"total-amount\"];\r",
+                  "const numberOfRates = jsonResponse.response.content[\"installment-calculation-result\"][\"number-of-rates\"];\r",
+                  "const rate = jsonResponse.response.content[\"installment-calculation-result\"][\"rate\"];\r",
+                  "const lastRate = jsonResponse.response.content[\"installment-calculation-result\"][\"last-rate\"];\r",
+                  "const interestRate = jsonResponse.response.content[\"installment-calculation-result\"][\"interest-rate\"];\r",
+                  "const paymentFirstday = jsonResponse.response.content[\"installment-calculation-result\"][\"payment-firstday\"];\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"paymentApi1_payIn3_totalAmount\", totalAmount);\r",
+                  "pm.collectionVariables.set(\"paymentApi1_payIn3_numberOfRates\", numberOfRates);\r",
+                  "pm.collectionVariables.set(\"paymentApi1_payIn3_rate\", rate);\r",
+                  "pm.collectionVariables.set(\"paymentApi1_payIn3_lastRate\", lastRate);\r",
+                  "pm.collectionVariables.set(\"paymentApi1_payIn3_interestRate\", interestRate);\r",
+                  "pm.collectionVariables.set(\"paymentApi1_payIn3_paymentFirstday\", paymentFirstday);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>MyTestsystem</system-id>\r\n\t\t<operation subtype=\"calculation-by-time\">CALCULATION_REQUEST</operation>\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t</head>\r\n\t<content>\r\n\t\t<installment-calculation>\r\n\t\t\t<amount>230.00</amount>\r\n\t\t\t<calculation-time>\r\n\t\t\t\t<month>3</month>\r\n\t\t\t</calculation-time>\r\n\t\t</installment-calculation>\r\n\t</content>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/calculation_request](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/calculation_request)"
+          },
+          "response": []
+        },
+        {
+          "name": "1 - 🚀 PAYMENT_INIT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonResponse = xml2Json(pm.response.text());\r",
+                  "\r",
+                  "const transactionId = jsonResponse.response.head[\"transaction-id\"];\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"paymentApi1_transactionId\", transactionId);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n    <head>\r\n        <system-id>myshop</system-id>\r\n        <operation>PAYMENT_INIT</operation>\r\n        <credential>\r\n            <profile-id>{{paymentApi1_profileId}}</profile-id>\r\n            <securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n        </credential>\r\n    </head>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_initialization](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_initialization)"
+          },
+          "response": []
+        },
+        {
+          "name": "2 - 💳 PAYMENT_REQUEST [Open Invoice - B2C]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n    <head>\r\n        <system-id>MyTestsystem</system-id>\r\n        <transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n        <operation>PAYMENT_REQUEST</operation>\r\n        <credential>\r\n            <profile-id>{{paymentApi1_profileId}}</profile-id>\r\n            <securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n        </credential>\r\n        <external>\r\n            <order-id>O-1234-HDZ</order-id> \r\n            <merchant-consumer-id>12345</merchant-consumer-id>\r\n        </external>\r\n        <customer-device>\r\n            <device-token>xxxxxxxxxxxxxxxxxxxxxxxx</device-token>\r\n        </customer-device>\r\n    </head>\r\n    <content>\r\n        <customer>\r\n            <first-name>Max</first-name>\r\n            <last-name>Mustermann</last-name>\r\n            <gender>M</gender>\r\n            <date-of-birth>1982-10-31</date-of-birth>\r\n            <ip-address>127.0.0.1</ip-address>\r\n            <contacts>\r\n                <email>test@test.de</email>\r\n                <phone>\r\n                    <direct-dial>030123456</direct-dial>\r\n                </phone>\r\n            </contacts>\r\n            <addresses>\r\n                <address type=\"BILLING\">\r\n                    <street>Nicht-Versenden-Straße 1</street>\r\n                    <street-number>2</street-number>\r\n                    <zip-code>12345</zip-code>\r\n                    <city>Testhausen</city>\r\n                    <country-code>DE</country-code>\r\n                </address>\r\n            </addresses>\r\n            <nationality>DE</nationality>\r\n            <customer-allow-credit-inquiry>yes</customer-allow-credit-inquiry>\r\n        </customer>\r\n        <shopping-basket amount=\"230.00\" currency=\"EUR\">\r\n            <items>\r\n                <item article-number=\"123\" quantity=\"6\" tax-rate=\"19\" unit-price-gross=\"10.00\">Artikel A</item>\r\n                <item article-number=\"234\" quantity=\"1\" tax-rate=\"19\" unit-price-gross=\"100.00\">Artikel B</item>\r\n                <item article-number=\"345\" quantity=\"2\" tax-rate=\"19\" unit-price-gross=\"50.00\" discount=\"-10.00\">Artikel C</item>\r\n            </items>\r\n            <discount unit-price-gross=\"-15.00\" tax-rate=\"19\">Rabatt</discount>\r\n            <shipping unit-price-gross=\"5.00\" tax-rate=\"19\">Versandkosten</shipping>\r\n        </shopping-basket>\t\t\r\n        <payment currency=\"EUR\" method=\"INVOICE\">\r\n            <amount>230.00</amount>\r\n        </payment>\r\n    </content>\r\n </request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_request](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_request)"
+          },
+          "response": []
+        },
+        {
+          "name": "2 - 💳 PAYMENT_REQUEST [Open Invoice - B2B]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n    <head>\r\n        <system-id>MyTestsystem</system-id>\r\n        <transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n        <operation>PAYMENT_REQUEST</operation>\r\n        <credential>\r\n            <profile-id>{{paymentApi1_profileId}}</profile-id>\r\n            <securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n        </credential>\r\n        <external>\r\n            <order-id>O-1234-HDZ</order-id> \r\n            <merchant-consumer-id>12345</merchant-consumer-id>\r\n        </external>\r\n        <customer-device>\r\n            <device-token>xxxxxxxxxxxxxxxxxxxxxxxx</device-token>\r\n        </customer-device>\r\n    </head>\r\n    <content>\r\n\t\t<customer>\r\n\t\t\t<first-name>Max</first-name>\r\n\t\t\t<last-name>Mustermann</last-name>\r\n\t\t\t<company-name>Test GmbH</company-name>\r\n\t\t\t<gender>U</gender>\r\n\t\t\t<ip-address>127.0.0.1</ip-address>\r\n\t\t\t<contacts>\r\n\t\t\t\t<email>test@test.de</email>\r\n\t\t\t\t<phone>\r\n\t\t\t\t\t<direct-dial>030123456</direct-dial>\r\n\t\t\t\t</phone>\r\n\t\t\t</contacts>\r\n\t\t\t<addresses>\r\n\t\t\t\t<address type=\"BILLING\">\r\n\t\t\t\t    <company>Test GmbH</company>\r\n\t\t\t\t\t<street>Nicht-Versenden-Straße 1</street>\r\n\t\t\t\t\t<street-number>2</street-number>\r\n\t\t\t\t\t<zip-code>12345</zip-code>\r\n\t\t\t\t\t<city>Testhausen</city>\r\n\t\t\t\t\t<country-code>DE</country-code>\r\n\t\t\t\t</address>\r\n\t\t\t\t<address type=\"DELIVERY\">\r\n\t\t\t\t\t<company>Test GmbH</company>\r\n\t\t\t\t\t<street>Straße der Lieferadresse</street>\r\n\t\t\t\t\t<street-number>2</street-number>\r\n\t\t\t\t\t<zip-code>54321</zip-code>\r\n\t\t\t\t\t<city>Testhausen</city>\r\n\t\t\t\t\t<country-code>DE</country-code>\r\n\t\t\t\t</address>\r\n\t\t\t</addresses>\r\n\t\t\t<nationality>DE</nationality>\r\n\t\t\t<customer-allow-credit-inquiry>yes</customer-allow-credit-inquiry>\r\n\t\t\t<vat-id>DE123456789</vat-id>\r\n\t\t\t<company-id>HRB 124156B</company-id>\r\n\t\t\t<registry-location>Hamburg</registry-location>\r\n\t\t\t<company-type>GMBH</company-type>\r\n\t\t\t<homepage>http://www.test-gmbh.testtld</homepage>\r\n\t\t</customer>\r\n        <shopping-basket amount=\"230.00\" currency=\"EUR\">\r\n            <items>\r\n                <item article-number=\"123\" quantity=\"6\" tax-rate=\"19\" unit-price-gross=\"10.00\">Artikel A</item>\r\n                <item article-number=\"234\" quantity=\"1\" tax-rate=\"19\" unit-price-gross=\"100.00\">Artikel B</item>\r\n                <item article-number=\"345\" quantity=\"2\" tax-rate=\"19\" unit-price-gross=\"50.00\" discount=\"-10.00\">Artikel C</item>\r\n            </items>\r\n            <discount unit-price-gross=\"-15.00\" tax-rate=\"19\">Rabatt</discount>\r\n            <shipping unit-price-gross=\"5.00\" tax-rate=\"19\">Versandkosten</shipping>\r\n        </shopping-basket>\t\t\r\n        <payment currency=\"EUR\" method=\"INVOICE\">\r\n            <amount>230.00</amount>\r\n        </payment>\r\n    </content>\r\n </request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_request](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_request)"
+          },
+          "response": []
+        },
+        {
+          "name": "2 - 💳 PAYMENT_REQUEST [Direct Debit - B2C]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n    <head>\r\n        <system-id>MyTestsystem</system-id>\r\n        <transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n        <operation>PAYMENT_REQUEST</operation>\r\n        <credential>\r\n            <profile-id>{{paymentApi1_profileId}}</profile-id>\r\n            <securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n        </credential>\r\n        <external>\r\n            <order-id>O-1234-HDZ</order-id> \r\n            <merchant-consumer-id>12345</merchant-consumer-id>\r\n        </external>\r\n        <customer-device>\r\n            <device-token>xxxxxxxxxxxxxxxxxxxxxxxx</device-token>\r\n        </customer-device>\r\n    </head>\r\n    <content>\r\n        <customer>\r\n            <first-name>Max</first-name>\r\n            <last-name>Mustermann</last-name>\r\n            <gender>M</gender>\r\n            <date-of-birth>1982-10-31</date-of-birth>\r\n            <ip-address>127.0.0.1</ip-address>\r\n            <contacts>\r\n                <email>test@test.de</email>\r\n                <phone>\r\n                    <direct-dial>030123456</direct-dial>\r\n                </phone>\r\n            </contacts>\r\n            <addresses>\r\n                <address type=\"BILLING\">\r\n                    <street>Nicht-Versenden-Straße 1</street>\r\n                    <street-number>2</street-number>\r\n                    <zip-code>12345</zip-code>\r\n                    <city>Testhausen</city>\r\n                    <country-code>DE</country-code>\r\n                </address>\r\n            </addresses>\r\n            <bank-account>\r\n                <owner>Max Mustermann</owner>\r\n                <iban>DE44100500001654698497</iban>\r\n                <bic-swift>BELADEBEXXX</bic-swift>\r\n            </bank-account>\r\n            <nationality>DE</nationality>\r\n            <customer-allow-credit-inquiry>yes</customer-allow-credit-inquiry>\r\n        </customer>\r\n        <shopping-basket amount=\"230.00\" currency=\"EUR\">\r\n            <items>\r\n                <item article-number=\"123\" quantity=\"6\" tax-rate=\"19\" unit-price-gross=\"10.00\">Artikel A</item>\r\n                <item article-number=\"234\" quantity=\"1\" tax-rate=\"19\" unit-price-gross=\"100.00\">Artikel B</item>\r\n                <item article-number=\"345\" quantity=\"2\" tax-rate=\"19\" unit-price-gross=\"50.00\" discount=\"-10.00\">Artikel C</item>\r\n            </items>\r\n            <discount unit-price-gross=\"-15.00\" tax-rate=\"19\">Rabatt</discount>\r\n            <shipping unit-price-gross=\"5.00\" tax-rate=\"19\">Versandkosten</shipping>\r\n        </shopping-basket>\t\t\r\n        <payment currency=\"EUR\" method=\"ELV\">\r\n            <amount>230.00</amount>\r\n        </payment>\r\n    </content>\r\n </request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_request](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_request)"
+          },
+          "response": []
+        },
+        {
+          "name": "2 - 💳 PAYMENT_REQUEST [Pay in 3 - B2C]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n    <head>\r\n        <system-id>MyTestsystem</system-id>\r\n        <transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n        <operation>PAYMENT_REQUEST</operation>\r\n        <credential>\r\n            <profile-id>{{paymentApi1_profileId}}</profile-id>\r\n            <securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n        </credential>\r\n        <external>\r\n            <order-id>O-1234-HDZ</order-id> \r\n            <merchant-consumer-id>12345</merchant-consumer-id>\r\n        </external>\r\n        <customer-device>\r\n            <device-token>xxxxxxxxxxxxxxxxxxxxxxxx</device-token>\r\n        </customer-device>\r\n    </head>\r\n    <content>\r\n        <customer>\r\n            <first-name>Max</first-name>\r\n            <last-name>Mustermann</last-name>\r\n            <gender>M</gender>\r\n            <date-of-birth>1982-10-31</date-of-birth>\r\n            <ip-address>127.0.0.1</ip-address>\r\n            <contacts>\r\n                <email>test@test.de</email>\r\n                <phone>\r\n                    <direct-dial>030123456</direct-dial>\r\n                </phone>\r\n            </contacts>\r\n            <addresses>\r\n                <address type=\"BILLING\">\r\n                    <street>Nicht-Versenden-Straße 1</street>\r\n                    <street-number>2</street-number>\r\n                    <zip-code>12345</zip-code>\r\n                    <city>Testhausen</city>\r\n                    <country-code>DE</country-code>\r\n                </address>\r\n            </addresses>\r\n            <bank-account>\r\n                <owner>Max Mustermann</owner>\r\n                <iban>DE44100500001654698497</iban>\r\n                <bic-swift>BELADEBEXXX</bic-swift>\r\n            </bank-account>\r\n            <nationality>DE</nationality>\r\n            <customer-allow-credit-inquiry>yes</customer-allow-credit-inquiry>\r\n        </customer>\r\n        <shopping-basket amount=\"230.00\" currency=\"EUR\">\r\n            <items>\r\n                <item article-number=\"123\" quantity=\"6\" tax-rate=\"19\" unit-price-gross=\"10.00\">Artikel A</item>\r\n                <item article-number=\"234\" quantity=\"1\" tax-rate=\"19\" unit-price-gross=\"100.00\">Artikel B</item>\r\n                <item article-number=\"345\" quantity=\"2\" tax-rate=\"19\" unit-price-gross=\"50.00\" discount=\"-10.00\">Artikel C</item>\r\n            </items>\r\n            <discount unit-price-gross=\"-15.00\" tax-rate=\"19\">Rabatt</discount>\r\n            <shipping unit-price-gross=\"5.00\" tax-rate=\"19\">Versandkosten</shipping>\r\n        </shopping-basket>\t\t\r\n        <payment currency=\"EUR\" method=\"INSTALLMENT\">\r\n            <amount>{{paymentApi1_payIn3_totalAmount}}</amount>\r\n            <installment-details>\r\n                <installment-number>{{paymentApi1_payIn3_numberOfRates}}</installment-number>\r\n                <installment-amount>{{paymentApi1_payIn3_rate}}</installment-amount>\r\n                <last-installment-amount>{{paymentApi1_payIn3_lastRate}}</last-installment-amount>\r\n                <interest-rate>{{paymentApi1_payIn3_interestRate}}</interest-rate>\r\n                <payment-firstday>{{paymentApi1_payIn3_paymentFirstday}}</payment-firstday>\r\n            </installment-details>\r\n            <debit-pay-type>DIRECT-DEBIT</debit-pay-type>\r\n        </payment>\r\n    </content>\r\n </request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_request](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_request)"
+          },
+          "response": []
+        },
+        {
+          "name": "3 - ✅ PAYMENT_CONFIRM",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>MyTestsystem</system-id> \r\n\t\t<transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n\t\t<operation>PAYMENT_CONFIRM</operation>\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t\t<external>\r\n\t\t\t<order-id>O-1234-HDZ</order-id> \r\n\t\t</external>\r\n\t</head>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_confirmation](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_confirmation)"
+          },
+          "response": []
+        },
+        {
+          "name": "4 - 📦 CONFIRMATION_DELIVER",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>MyTestsystem</system-id> \r\n\t\t<transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n\t\t<operation>CONFIRMATION_DELIVER</operation>\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t\t<external>\r\n\t\t\t<order-id>O-1234-HDZ</order-id>\r\n\t\t\t<tracking>\r\n\t\t\t\t<id provider=\"DHL\">02384208304</id>\r\n\t\t\t</tracking>\r\n\t\t</external>\r\n\t\t<meta>\r\n\t\t\t<systems>\r\n\t\t\t\t<api-version>1.8</api-version>\r\n\t\t\t</systems>\r\n\t\t</meta>\r\n\t</head>\r\n\t<content>\r\n\t\t<invoicing>\r\n\t\t\t<invoice-id>1234</invoice-id>\r\n\t\t</invoicing>\r\n\t\t<shopping-basket amount=\"230.00\" currency=\"EUR\">\r\n\t\t\t<items>\r\n\t\t\t\t<item article-number=\"123\" quantity=\"6\" tax-rate=\"19\" unit-price-gross=\"10.00\">Artikel A</item>\r\n\t\t\t\t<item article-number=\"234\" quantity=\"1\" tax-rate=\"19\" unit-price-gross=\"100.00\">Artikel B</item>\r\n\t\t\t\t<item article-number=\"345\" quantity=\"2\" tax-rate=\"19\" unit-price-gross=\"50.00\" discount=\"-10.00\">Artikel C</item>\r\n\t\t\t</items>\r\n\t\t\t<discount unit-price-gross=\"-15.00\" tax-rate=\"19\">Rabatt</discount>\r\n\t\t\t<shipping unit-price-gross=\"5.00\" tax-rate=\"19\">Versandkosten</shipping>\r\n\t\t</shopping-basket>\t\t\r\n\t</content>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/confirmation_deliver](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/confirmation_deliver)"
+          },
+          "response": []
+        },
+        {
+          "name": "5 - ✏️ PAYMENT_CHANGE [change-order]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>MyTestsystem</system-id> \r\n\t\t<transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n    <operation subtype=\"change-order\">PAYMENT_CHANGE</operation>\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t</head>\r\n\t<content>\r\n\t\t<shopping-basket amount=\"180.00\" currency=\"EUR\">\r\n\t\t\t<items>\r\n\t\t\t\t<item article-number=\"123\" quantity=\"6\" tax-rate=\"19\" unit-price-gross=\"10.00\">Article A</item>\r\n\t\t\t\t<item article-number=\"234\" quantity=\"1\" tax-rate=\"19\" unit-price-gross=\"90.00\">Artikel B</item>\r\n\t\t\t\t<item article-number=\"345a\" quantity=\"1\" tax-rate=\"19\" unit-price-gross=\"50.00\" discount=\"-10.00\">Artikel C</item>\r\n\t\t\t</items>\r\n\t\t\t<discount unit-price-gross=\"-15.00\" tax-rate=\"19\">Rabatt</discount>\r\n\t\t\t<shipping unit-price-gross=\"5.00\" tax-rate=\"19\">Versandkosten</shipping>\r\n\t\t</shopping-basket>\t\r\n\t</content>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#change-order](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#change-order)"
+          },
+          "response": []
+        },
+        {
+          "name": "5 - 💰 PAYMENT_CHANGE [credit]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>MyTestsystem</system-id> \r\n\t\t<transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n\t\t<operation subtype=\"credit\">PAYMENT_CHANGE</operation>\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t</head>\r\n\t<content>\r\n\t\t<shopping-basket amount=\"-10.00\" currency=\"EUR\">\r\n\t\t\t<discount unit-price-gross=\"-10.00\" tax-rate=\"19.00\">Kulanzgutschrift</discount>\r\n\t\t</shopping-basket>\r\n\t</content>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#credit](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#credit)"
+          },
+          "response": []
+        },
+        {
+          "name": "5 - ❌ PAYMENT_CHANGE [partial cancellation]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>MyTestsystem</system-id> \r\n\t\t<transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n\t\t<operation subtype=\"cancellation\">PAYMENT_CHANGE</operation>\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t</head>\r\n\t<content>\r\n\t\t<shopping-basket amount=\"60.00\" currency=\"EUR\">\r\n\t\t\t<items>\r\n\t\t\t\t<item article-number=\"123\" quantity=\"6\" tax-rate=\"19\" unit-price-gross=\"10.00\">Article A</item>\r\n\t\t\t</items>\r\n\t\t</shopping-basket>\r\n\t</content>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#cancellation](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#cancellation)"
+          },
+          "response": []
+        },
+        {
+          "name": "5 - ❌ PAYMENT_CHANGE [full cancellation]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>MyTestsystem</system-id> \r\n\t\t<transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n\t\t<operation subtype=\"cancellation\">PAYMENT_CHANGE</operation>\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t</head>\r\n\t<content>\r\n\t\t<shopping-basket amount=\"0.00\" currency=\"EUR\">\r\n\t\t\t<items/>\r\n\t\t</shopping-basket>\r\n\t</content>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#cancellation](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#cancellation)"
+          },
+          "response": []
+        },
+        {
+          "name": "5 - ↩ PAYMENT_CHANGE [partial return]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>MyTestsystem</system-id> \r\n\t\t<transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n\t\t<operation subtype=\"return\">PAYMENT_CHANGE</operation>\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t</head>\r\n\t<content>\r\n\t\t<shopping-basket amount=\"5.00\" currency=\"EUR\">\r\n\t\t\t<items>\r\n\t\t\t\t<item article-number=\"123\" quantity=\"1\" tax-rate=\"19\" unit-price-gross=\"10.00\">Artikel A</item>\r\n\t\t\t</items>\r\n\t\t\t<discount unit-price-gross=\"-5.00\" tax-rate=\"19\">Rabatt</discount>\r\n\t\t</shopping-basket>\r\n\t</content>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#return](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#return)"
+          },
+          "response": []
+        },
+        {
+          "name": "5 - ↩ PAYMENT_CHANGE [full return]",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "content-type": true
+            }
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=UTF-8",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<request version=\"1.0\" xmlns=\"urn://www.ratepay.com/payment/1_0\">\r\n\t<head>\r\n\t\t<system-id>MyTestsystem</system-id> \r\n\t\t<transaction-id>{{paymentApi1_transactionId}}</transaction-id>\r\n\t\t<operation subtype=\"return\">PAYMENT_CHANGE</operation>\r\n\t\t<credential>\r\n\t\t\t<profile-id>{{paymentApi1_profileId}}</profile-id>\r\n\t\t\t<securitycode>{{paymentApi1_securityCode}}</securitycode>\r\n\t\t</credential>\r\n\t</head>\r\n\t<content>\r\n\t\t<shopping-basket amount=\"0.00\" currency=\"EUR\">\r\n\t\t\t<items/>\r\n\t\t</shopping-basket>\r\n\t</content>\r\n</request>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gateway-int.ratepay.com/api/xml/1_0",
+              "protocol": "https",
+              "host": [
+                "gateway-int",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "api",
+                "xml",
+                "1_0"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#return](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/follow_up_operations/payment_change#return)"
+          },
+          "response": []
+        }
+      ],
+      "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_1.8](https://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_1.8)"
+    },
+    {
+      "name": "Transaction Status API",
+      "item": [
+        {
+          "name": "0 - 🔑 Request OAuth token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "pm.collectionVariables.set(\"paymentApi1_transactionStatusApi_oauthToken\", response.access_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"client_id\": \"{{paymentApi1_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi1_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi1_transactionStatusApi_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://oauth.ratepay.com/oauth/token",
+              "protocol": "https",
+              "host": [
+                "oauth",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "oauth",
+                "token"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+          },
+          "response": []
+        },
+        {
+          "name": "1 - 🔍 Get order status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{paymentApi1_transactionStatusApi_oauthToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api-integration.ratepay.com/order/status/v2/transactions/{{paymentApi1_transactionId}}?include=all",
+              "protocol": "https",
+              "host": [
+                "api-integration",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "order",
+                "status",
+                "v2",
+                "transactions",
+                "{{paymentApi1_transactionId}}"
+              ],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "all"
+                }
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/transaction_status/payment_api_1_8/operations/other/getorderstatus](https://docs.ratepay.com/docs/developer/transaction_status/payment_api_1_8/operations/other/getorderstatus)"
+          },
+          "response": []
+        }
+      ],
+      "description": "[https://docs.ratepay.com/docs/developer/transaction_status/introduction](https://docs.ratepay.com/docs/developer/transaction_status/introduction)"
+    }
+  ],
+  "variable": [
+    {
+      "key": "paymentApi1_profileId",
+      "value": "INTEGRATION_TE_DACH",
+      "description": "❗Mandatory, if Payment API 1.8 is used: Part of authorization. This value will be provided by your Ratepay representative.\n\nhttps://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/introduction/credentials"
+    },
+    {
+      "key": "paymentApi1_securityCode",
+      "value": "4c0a11923fa3433fb168f9c7176429e9",
+      "description": "❗Mandatory, if Payment API 1.8 is used: Part of authorization. This value will be provided by your Ratepay representative.\n\nhttps://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/introduction/credentials"
+    },
+    {
+      "key": "paymentApi1_oauthClientId",
+      "value": "snbFcxD4Rxt2O4YqeGqDls9yrGWYhmQ0",
+      "description": "❗Mandatory, if Transaction Status API is used: Part of OAuth authorization. This value will be provided by your Ratepay representative.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=request&path=client_id"
+    },
+    {
+      "key": "paymentApi1_oauthClientSecret",
+      "value": "IHa7jiW0hMlH0VsoxDTZ03XH76NED7RwFvJLsmmUXg9fkowhiVQqp7EA84WoYT1Q",
+      "description": "❗Mandatory, if Transaction Status API is used: Part of OAuth authorization. This value will be provided by your Ratepay representative.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=request&path=client_secret"
+    },
+    {
+      "key": "paymentApi1_transactionStatusApi_oauthAudienceURL",
+      "value": "https://api-integration.ratepay.com/order/status/v2/transactions",
+      "description": "❗Mandatory, if Transaction Status API is used: Part of OAuth authorization.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=request&path=audience"
+    },
+    {
+      "key": "paymentApi1_transactionStatusApi_oauthToken",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Request OAuth token\" requests in the \"Transaction Status API\" folder. \nMandatory, if Transaction Status API is used: Part of OAuth authorization.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=response&c=200&path=access_token"
+    },
+    {
+      "key": "paymentApi1_transactionId",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"PAYMENT_INIT\" requests in the \"Payment API 1.8\" folder. \nMandatory for follow up operations with Payment API 1.8.\n\nhttps://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/place_order/payment_initialization"
+    },
+    {
+      "key": "paymentApi1_payIn3_totalAmount",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"CALCULATION_REQUEST\" requests in the \"Payment API 1.8\" folder. \nMandatory, if Pay in 3 as payment method will be used, to proceed with PAYMENT_REQUEST on Payment API 1.8.\n\nhttps://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/calculation_request"
+    },
+    {
+      "key": "paymentApi1_payIn3_numberOfRates",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"CALCULATION_REQUEST\" requests in the \"Payment API 1.8\" folder. \nMandatory, if Pay in 3 as payment method will be used, to proceed with PAYMENT_REQUEST on Payment API 1.8.\n\nhttps://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/calculation_request"
+    },
+    {
+      "key": "paymentApi1_payIn3_rate",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"CALCULATION_REQUEST\" requests in the \"Payment API 1.8\" folder. \nMandatory, if Pay in 3 as payment method will be used, to proceed with PAYMENT_REQUEST on Payment API 1.8.\n\nhttps://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/calculation_request"
+    },
+    {
+      "key": "paymentApi1_payIn3_lastRate",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"CALCULATION_REQUEST\" requests in the \"Payment API 1.8\" folder. \nMandatory, if Pay in 3 as payment method will be used, to proceed with PAYMENT_REQUEST on Payment API 1.8.\n\nhttps://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/calculation_request"
+    },
+    {
+      "key": "paymentApi1_payIn3_interestRate",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"CALCULATION_REQUEST\" requests in the \"Payment API 1.8\" folder. \nMandatory, if Pay in 3 as payment method will be used, to proceed with PAYMENT_REQUEST on Payment API 1.8.\n\nhttps://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/calculation_request"
+    },
+    {
+      "key": "paymentApi1_payIn3_paymentFirstday",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"CALCULATION_REQUEST\" requests in the \"Payment API 1.8\" folder. \nMandatory, if Pay in 3 as payment method will be used, to continue with the PAYMENT_REQUEST on Payment API 1.8.\n\nhttps://docs.ratepay.com/docs/developer/api_integration/payment_1.8/payment_api_documentation/the_ratepay_gateway_operations/instalment_calculator/calculation_request"
+    }
+  ]
+}

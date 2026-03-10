@@ -1,0 +1,2043 @@
+{
+  "info": {
+    "_postman_id": "2fa0c333-b6c5-4ab7-9392-caf6fdf94e1d",
+    "name": "Ratepay Payment API 2.0 (Integration)",
+    "description": "## Ratepay Payment API 2.0 – Postman Collection (Integration)\n\nThis collection demonstrates the following Ratepay APIs:\n\n- Payment API 2.0\n    \n- Hosted Payment Page\n    \n- Transaction Status API\n    \n\nAll credentials, which are by default included, are integration credentials and publicly available. The collection stores variables, based on the responses of requests - to proceed sucessfully & an easy way in follow up requests.\n\nFurther integration details can be found at [docs.ratepay.com](https://docs.ratepay.com/).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "10912000"
+  },
+  "item": [
+    {
+      "name": "Payment API 2.0",
+      "item": [
+        {
+          "name": "Transaction management",
+          "item": [
+            {
+              "name": "0 - 🔑 Request OAuth token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_oauthToken\", response.access_token);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"client_id\": \"{{paymentApi2_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi2_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi2_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://oauth.ratepay.com/oauth/token",
+                  "protocol": "https",
+                  "host": [
+                    "oauth",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "oauth",
+                    "token"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - 💳 Authorize transaction [Open Invoice - B2C]",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_transactionId\", response.ratepay_transaction_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"buyer\": {\r\n    \"person\": {\r\n      \"title\": \"Dr.\",\r\n      \"first_name\": \"Heinz\",\r\n      \"last_name\": \"Steeger\",\r\n      \"date_of_birth\": \"1971-05-19\"\r\n    },\r\n    \"billing_address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    },\r\n    \"contact\": {\r\n      \"email\": \"heinz.steeger@example.org\",\r\n      \"phone\": \"+49 177 4445555\"\r\n    },\r\n    \"language\": \"de\",\r\n    \"shop_buyer_id\": \"shop-buyer-id-1234\"\r\n  },\r\n  \"currency\": \"EUR\",\r\n  \"delivery\": {\r\n    \"first_name\": \"Heinz\",\r\n    \"full_name\": null,\r\n    \"last_name\": \"Steeger\",\r\n    \"in_store_collect\": null,\r\n    \"pick_up_box\": null,\r\n    \"pick_up_shop\": null,\r\n    \"address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    }\r\n  },\r\n  \"device\": {\r\n    \"source_ip_address\": \"10.17.1.1\",\r\n    \"token\": \"ade028c1-d2a2-4189-9214-e21089cd47f1\"\r\n  },\r\n  \"partner_operation_id\": \"partner-operation-id-1234\",\r\n  \"partner_transaction_id\": \"partner-transaction-id-1234\",\r\n  \"payment_method\": {\r\n    \"payment_option\": \"OPEN_INVOICE\",\r\n    \"transfer_type\": \"BANK_TRANSFER\"\r\n  },\r\n  \"shop_baskets\": [\r\n    {\r\n      \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n      \"shop_transaction_id\": \"shop-transaction-id-1234\",\r\n      \"gross_amount\": 43.8,\r\n      \"items\": [\r\n        {\r\n          \"article_number\": \"kitchen-utils-1\",\r\n          \"category\": \"household\",\r\n          \"description\": \"fruit knife with curved blade, 8 cm\",\r\n          \"gross_total_price\": 33.8,\r\n          \"gross_unit_discount\": -1.55,\r\n          \"gross_unit_price\": 18.45,\r\n          \"name\": \"fruit knife\",\r\n          \"net_total_price\": 28.4,\r\n          \"net_unit_discount\": -1.3,\r\n          \"net_unit_price\": 15.5,\r\n          \"quantity\": 2,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"special_items\": [\r\n        {\r\n          \"article_number\": \"Shipping\",\r\n          \"category\": \"shipping\",\r\n          \"description\": \"Shipping\",\r\n          \"gross_total_price\": 10,\r\n          \"gross_unit_price\": 10,\r\n          \"name\": \"Shipping\",\r\n          \"net_total_price\": 8.4,\r\n          \"net_unit_price\": 8.4,\r\n          \"quantity\": 1,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"vats\": [\r\n        {\r\n          \"net_amount\": 36.8,\r\n          \"tax_amount\": 7,\r\n          \"tax_rate\": 19\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - 💳 Authorize transaction [Open Invoice - B2C - with OTP]",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_transactionId\", response.ratepay_transaction_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"buyer\": {\r\n    \"person\": {\r\n      \"title\": \"Dr.\",\r\n      \"first_name\": \"Heinz\",\r\n      \"last_name\": \"Steeger\",\r\n      \"date_of_birth\": \"1971-05-19\"\r\n    },\r\n    \"billing_address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    },\r\n    \"contact\": {\r\n      \"email\": \"otp_required@ratepay.com\",\r\n      \"phone\": \"+49 177 4445555\"\r\n    },\r\n    \"language\": \"de\",\r\n    \"shop_buyer_id\": \"shop-buyer-id-1234\"\r\n  },\r\n  \"currency\": \"EUR\",\r\n  \"delivery\": {\r\n    \"first_name\": \"Heinz\",\r\n    \"full_name\": null,\r\n    \"last_name\": \"Steeger\",\r\n    \"in_store_collect\": null,\r\n    \"pick_up_box\": null,\r\n    \"pick_up_shop\": null,\r\n    \"address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    }\r\n  },\r\n  \"device\": {\r\n    \"source_ip_address\": \"10.17.1.1\",\r\n    \"token\": \"ade028c1-d2a2-4189-9214-e21089cd47f1\"\r\n  },\r\n  \"partner_operation_id\": \"partner-operation-id-1234\",\r\n  \"partner_transaction_id\": \"partner-transaction-id-1234\",\r\n  \"payment_method\": {\r\n    \"payment_option\": \"OPEN_INVOICE\",\r\n    \"transfer_type\": \"BANK_TRANSFER\"\r\n  },\r\n  \"shop_baskets\": [\r\n    {\r\n      \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n      \"shop_transaction_id\": \"shop-transaction-id-1234\",\r\n      \"gross_amount\": 43.8,\r\n      \"items\": [\r\n        {\r\n          \"article_number\": \"kitchen-utils-1\",\r\n          \"category\": \"household\",\r\n          \"description\": \"fruit knife with curved blade, 8 cm\",\r\n          \"gross_total_price\": 33.8,\r\n          \"gross_unit_discount\": -1.55,\r\n          \"gross_unit_price\": 18.45,\r\n          \"name\": \"fruit knife\",\r\n          \"net_total_price\": 28.4,\r\n          \"net_unit_discount\": -1.3,\r\n          \"net_unit_price\": 15.5,\r\n          \"quantity\": 2,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"special_items\": [\r\n        {\r\n          \"article_number\": \"Shipping\",\r\n          \"category\": \"shipping\",\r\n          \"description\": \"Shipping\",\r\n          \"gross_total_price\": 10,\r\n          \"gross_unit_price\": 10,\r\n          \"name\": \"Shipping\",\r\n          \"net_total_price\": 8.4,\r\n          \"net_unit_price\": 8.4,\r\n          \"quantity\": 1,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"vats\": [\r\n        {\r\n          \"net_amount\": 36.8,\r\n          \"tax_amount\": 7,\r\n          \"tax_rate\": 19\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - 💳 Authorize transaction [Open Invoice - B2B]",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_transactionId\", response.ratepay_transaction_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"buyer\": {\r\n    \"company\": {\r\n       \"name\": \"Berlin Advertising Agency\",\r\n       \"vat_id\": \"DE123456789\"\r\n    },\r\n    \"billing_address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    },\r\n    \"contact\": {\r\n      \"email\": \"heinz.steeger@example.org\",\r\n      \"phone\": \"+49 177 4445555\"\r\n    },\r\n    \"language\": \"de\",\r\n    \"shop_buyer_id\": \"shop-buyer-id-1234\"\r\n  },\r\n  \"currency\": \"EUR\",\r\n  \"delivery\": {\r\n    \"company\": \"Berlin Advertising Agency\",\r\n    \"first_name\": \"Heinz\",\r\n    \"full_name\": null,\r\n    \"last_name\": \"Steeger\",\r\n    \"in_store_collect\": null,\r\n    \"pick_up_box\": null,\r\n    \"pick_up_shop\": null,\r\n    \"address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    }\r\n  },\r\n  \"device\": {\r\n    \"source_ip_address\": \"10.17.1.1\",\r\n    \"token\": \"ade028c1-d2a2-4189-9214-e21089cd47f1\"\r\n  },\r\n  \"partner_operation_id\": \"partner-operation-id-1234\",\r\n  \"partner_transaction_id\": \"partner-transaction-id-1234\",\r\n  \"payment_method\": {\r\n    \"payment_option\": \"OPEN_INVOICE\",\r\n    \"transfer_type\": \"BANK_TRANSFER\"\r\n  },\r\n  \"shop_baskets\": [\r\n    {\r\n      \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n      \"shop_transaction_id\": \"shop-transaction-id-1234\",\r\n      \"gross_amount\": 43.8,\r\n      \"items\": [\r\n        {\r\n          \"article_number\": \"kitchen-utils-1\",\r\n          \"category\": \"household\",\r\n          \"description\": \"fruit knife with curved blade, 8 cm\",\r\n          \"gross_total_price\": 33.8,\r\n          \"gross_unit_discount\": -1.55,\r\n          \"gross_unit_price\": 18.45,\r\n          \"name\": \"fruit knife\",\r\n          \"net_total_price\": 28.4,\r\n          \"net_unit_discount\": -1.3,\r\n          \"net_unit_price\": 15.5,\r\n          \"quantity\": 2,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"special_items\": [\r\n        {\r\n          \"article_number\": \"Shipping\",\r\n          \"category\": \"shipping\",\r\n          \"description\": \"Shipping\",\r\n          \"gross_total_price\": 10,\r\n          \"gross_unit_price\": 10,\r\n          \"name\": \"Shipping\",\r\n          \"net_total_price\": 8.4,\r\n          \"net_unit_price\": 8.4,\r\n          \"quantity\": 1,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"vats\": [\r\n        {\r\n          \"net_amount\": 36.8,\r\n          \"tax_amount\": 7,\r\n          \"tax_rate\": 19\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - 💳 Authorize transaction [Direct Debit - B2C]",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_transactionId\", response.ratepay_transaction_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"buyer\": {\r\n    \"person\": {\r\n      \"title\": \"Dr.\",\r\n      \"first_name\": \"Heinz\",\r\n      \"last_name\": \"Steeger\",\r\n      \"date_of_birth\": \"1971-05-19\"\r\n    },\r\n    \"billing_address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    },\r\n    \"contact\": {\r\n      \"email\": \"heinz.steeger@example.org\",\r\n      \"phone\": \"+49 177 4445555\"\r\n    },\r\n    \"language\": \"de\",\r\n    \"shop_buyer_id\": \"shop-buyer-id-1234\"\r\n  },\r\n  \"currency\": \"EUR\",\r\n  \"delivery\": {\r\n    \"first_name\": \"Heinz\",\r\n    \"full_name\": null,\r\n    \"last_name\": \"Steeger\",\r\n    \"in_store_collect\": null,\r\n    \"pick_up_box\": null,\r\n    \"pick_up_shop\": null,\r\n    \"address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    }\r\n  },\r\n  \"device\": {\r\n    \"source_ip_address\": \"10.17.1.1\",\r\n    \"token\": \"ade028c1-d2a2-4189-9214-e21089cd47f1\"\r\n  },\r\n  \"partner_operation_id\": \"partner-operation-id-1234\",\r\n  \"partner_transaction_id\": \"partner-transaction-id-1234\",\r\n  \"payment_details\": {\r\n    \"debit_bank_account\": {\r\n      \"iban\": \"DE44100500001654698497\",\r\n      \"owner\": \"Heinz Steeger\"\r\n    }\r\n  },\r\n  \"payment_method\": {\r\n    \"payment_option\": \"PAY_NOW\",\r\n    \"transfer_type\": \"SEPA_DIRECT_DEBIT\"\r\n  },\r\n  \"shop_baskets\": [\r\n    {\r\n      \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n      \"shop_transaction_id\": \"shop-transaction-id-1234\",\r\n      \"gross_amount\": 43.8,\r\n      \"items\": [\r\n        {\r\n          \"article_number\": \"kitchen-utils-1\",\r\n          \"category\": \"household\",\r\n          \"description\": \"fruit knife with curved blade, 8 cm\",\r\n          \"gross_total_price\": 33.8,\r\n          \"gross_unit_discount\": -1.55,\r\n          \"gross_unit_price\": 18.45,\r\n          \"name\": \"fruit knife\",\r\n          \"net_total_price\": 28.4,\r\n          \"net_unit_discount\": -1.3,\r\n          \"net_unit_price\": 15.5,\r\n          \"quantity\": 2,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"special_items\": [\r\n        {\r\n          \"article_number\": \"Shipping\",\r\n          \"category\": \"shipping\",\r\n          \"description\": \"Shipping\",\r\n          \"gross_total_price\": 10,\r\n          \"gross_unit_price\": 10,\r\n          \"name\": \"Shipping\",\r\n          \"net_total_price\": 8.4,\r\n          \"net_unit_price\": 8.4,\r\n          \"quantity\": 1,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"vats\": [\r\n        {\r\n          \"net_amount\": 36.8,\r\n          \"tax_amount\": 7,\r\n          \"tax_rate\": 19\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - 💳 Authorize transaction [Direct Debit - B2B]",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_transactionId\", response.ratepay_transaction_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"buyer\": {\r\n    \"company\": {\r\n       \"name\": \"Berlin Advertising Agency\",\r\n       \"vat_id\": \"DE123456789\"\r\n    },\r\n    \"billing_address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    },\r\n    \"contact\": {\r\n      \"email\": \"heinz.steeger@example.org\",\r\n      \"phone\": \"+49 177 4445555\"\r\n    },\r\n    \"language\": \"de\",\r\n    \"shop_buyer_id\": \"shop-buyer-id-1234\"\r\n  },\r\n  \"currency\": \"EUR\",\r\n  \"delivery\": {\r\n    \"company\": \"Berlin Advertising Agency\",\r\n    \"first_name\": \"Heinz\",\r\n    \"full_name\": null,\r\n    \"last_name\": \"Steeger\",\r\n    \"in_store_collect\": null,\r\n    \"pick_up_box\": null,\r\n    \"pick_up_shop\": null,\r\n    \"address\": {\r\n      \"city\": \"Berlin\",\r\n      \"country_code\": \"DE\",\r\n      \"street\": \"Schönhauser Allee\",\r\n      \"street_addition\": \"Seitenflügel, 2. HH\",\r\n      \"street_number\": \"84\",\r\n      \"zip_code\": \"10439\"\r\n    }\r\n  },\r\n  \"device\": {\r\n    \"source_ip_address\": \"10.17.1.1\",\r\n    \"token\": \"ade028c1-d2a2-4189-9214-e21089cd47f1\"\r\n  },\r\n  \"partner_operation_id\": \"partner-operation-id-1234\",\r\n  \"partner_transaction_id\": \"partner-transaction-id-1234\",\r\n  \"payment_details\": {\r\n    \"debit_bank_account\": {\r\n      \"iban\": \"DE44100500001654698497\",\r\n      \"owner\": \"Heinz Steeger\"\r\n    }\r\n  },\r\n  \"payment_method\": {\r\n    \"payment_option\": \"PAY_NOW\",\r\n    \"transfer_type\": \"SEPA_DIRECT_DEBIT\"\r\n  },\r\n  \"shop_baskets\": [\r\n    {\r\n      \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n      \"shop_transaction_id\": \"shop-transaction-id-1234\",\r\n      \"gross_amount\": 43.8,\r\n      \"items\": [\r\n        {\r\n          \"article_number\": \"kitchen-utils-1\",\r\n          \"category\": \"household\",\r\n          \"description\": \"fruit knife with curved blade, 8 cm\",\r\n          \"gross_total_price\": 33.8,\r\n          \"gross_unit_discount\": -1.55,\r\n          \"gross_unit_price\": 18.45,\r\n          \"name\": \"fruit knife\",\r\n          \"net_total_price\": 28.4,\r\n          \"net_unit_discount\": -1.3,\r\n          \"net_unit_price\": 15.5,\r\n          \"quantity\": 2,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"special_items\": [\r\n        {\r\n          \"article_number\": \"Shipping\",\r\n          \"category\": \"shipping\",\r\n          \"description\": \"Shipping\",\r\n          \"gross_total_price\": 10,\r\n          \"gross_unit_price\": 10,\r\n          \"name\": \"Shipping\",\r\n          \"net_total_price\": 8.4,\r\n          \"net_unit_price\": 8.4,\r\n          \"quantity\": 1,\r\n          \"tax_rate\": 19,\r\n          \"unit\": \"piece\"\r\n        }\r\n      ],\r\n      \"vats\": [\r\n        {\r\n          \"net_amount\": 36.8,\r\n          \"tax_amount\": 7,\r\n          \"tax_rate\": 19\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "2 - 🔍 Retrieve transaction",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/gettransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/gettransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "3 - ✏️ Change transaction",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/merge-patch+json",
+                    "type": "text"
+                  }				  
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"authorization_expires\": \"2026-04-02T16:15:18.823+02:00\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/change](https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/change)"
+              },
+              "response": []
+            }
+          ],
+          "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management](https://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management)"
+        },
+        {
+          "name": "One Time Passcode",
+          "item": [
+            {
+              "name": "0 - 🔑 Request OAuth token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_oauthToken\", response.access_token);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"client_id\": \"{{paymentApi2_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi2_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi2_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://oauth.ratepay.com/oauth/token",
+                  "protocol": "https",
+                  "host": [
+                    "oauth",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "oauth",
+                    "token"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - 📲 Validate an OTP code",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"otp_code\": 15316\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/2fa/v1/verify/{{paymentApi2_transactionId}}",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "2fa",
+                    "v1",
+                    "verify",
+                    "{{paymentApi2_transactionId}}"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/otp/openapi/otp_api/one-time-passcode/verifycode](https://docs.ratepay.com/apis/otp/openapi/otp_api/one-time-passcode/verifycode)"
+              },
+              "response": []
+            },
+            {
+              "name": "2 - 🔄 Regenerate OTP code",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/2fa/v1/regenerate/{{paymentApi2_transactionId}}",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "2fa",
+                    "v1",
+                    "regenerate",
+                    "{{paymentApi2_transactionId}}"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/otp/openapi/otp_api/one-time-passcode/regenerate](https://docs.ratepay.com/apis/otp/openapi/otp_api/one-time-passcode/regenerate)"
+              },
+              "response": []
+            }
+          ],
+          "description": "[https://docs.ratepay.com/docs/developer/otp/introduction](https://docs.ratepay.com/docs/developer/otp/introduction)"
+        },
+        {
+          "name": "Incremental authorization",
+          "item": [
+            {
+              "name": "0 - 🔑 Request OAuth token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_oauthToken\", response.access_token);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"client_id\": \"{{paymentApi2_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi2_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi2_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://oauth.ratepay.com/oauth/token",
+                  "protocol": "https",
+                  "host": [
+                    "oauth",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "oauth",
+                    "token"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - ➕ Incrementally authorize transaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_authorizationId\", response.ratepay_authorization_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"gross_amount\": 10.1,\r\n  \"items\": [\r\n    {\r\n      \"article_number\": \"kitchen-utils-1\",\r\n      \"category\": \"household\",\r\n      \"description\": \"fruit knife with curved blade, 8 cm\",\r\n      \"gross_total_price\": 10.1,\r\n      \"gross_unit_price\": 10.1,\r\n      \"name\": \"fruit knife\",\r\n      \"net_total_price\": 8.48,\r\n      \"net_unit_price\": 8.48,\r\n      \"quantity\": 1,\r\n      \"tax_rate\": 19,\r\n      \"unit\": \"piece\"\r\n    }\r\n  ],\r\n  \"partner_operation_id\": \"authorization-id-1234\",\r\n  \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n  \"vats\": [\r\n    {\r\n      \"net_amount\": 8.48,\r\n      \"tax_amount\": 1.62,\r\n      \"tax_rate\": 19\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/authorizations",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "authorizations"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/incremental-authorization/incrementalauthorizationtransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/incremental-authorization/incrementalauthorizationtransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "2 - 🔍 Retrieve all authorizations",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/authorizations",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "authorizations"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/incremental-authorization/getallauthorizations](https://docs.ratepay.com/apis/payment/openapi/payment_api/incremental-authorization/getallauthorizations)"
+              },
+              "response": []
+            },
+            {
+              "name": "3 - 🔍 Retrieve an authorization",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_authorizationId\", response.ratepay_authorization_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/authorizations/{{paymentApi2_authorizationId}}",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "authorizations",
+                    "{{paymentApi2_authorizationId}}"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/incremental-authorization/getsingleauthorization](https://docs.ratepay.com/apis/payment/openapi/payment_api/incremental-authorization/getsingleauthorization)"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Cancellation",
+          "item": [
+            {
+              "name": "0 - 🔑 Request OAuth token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_oauthToken\", response.access_token);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"client_id\": \"{{paymentApi2_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi2_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi2_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://oauth.ratepay.com/oauth/token",
+                  "protocol": "https",
+                  "host": [
+                    "oauth",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "oauth",
+                    "token"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - ❌ Cancel transaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_cancellationId\", response.ratepay_cancellation_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"gross_amount\": 10.1,\r\n  \"items\": [\r\n    {\r\n      \"article_number\": \"kitchen-utils-1\",\r\n      \"category\": \"household\",\r\n      \"description\": \"fruit knife with curved blade, 8 cm\",\r\n      \"gross_total_price\": 10.1,\r\n      \"gross_unit_price\": 10.1,\r\n      \"name\": \"fruit knife\",\r\n      \"net_total_price\": 8.48,\r\n      \"net_unit_price\": 8.48,\r\n      \"quantity\": 1,\r\n      \"tax_rate\": 19,\r\n      \"unit\": \"piece\"\r\n    }\r\n  ],\r\n  \"partner_operation_id\": \"authorization-id-1234\",\r\n  \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n  \"vats\": [\r\n    {\r\n      \"net_amount\": 8.48,\r\n      \"tax_amount\": 1.62,\r\n      \"tax_rate\": 19\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/cancellations",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "cancellations"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/cancellation/canceltransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/cancellation/canceltransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "2 - 🔍 Retrieve all cancellations",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/cancellations",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "cancellations"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/cancellation/getallcancellations](https://docs.ratepay.com/apis/payment/openapi/payment_api/cancellation/getallcancellations)"
+              },
+              "response": []
+            },
+            {
+              "name": "3 - 🔍 Retrieve a cancellation",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/cancellations/{{paymentApi2_cancellationId}}",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "cancellations",
+                    "{{paymentApi2_cancellationId}}"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/cancellation/getsinglecancellation](https://docs.ratepay.com/apis/payment/openapi/payment_api/cancellation/getsinglecancellation)"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Capture",
+          "item": [
+            {
+              "name": "0 - 🔑 Request OAuth token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_oauthToken\", response.access_token);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"client_id\": \"{{paymentApi2_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi2_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi2_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://oauth.ratepay.com/oauth/token",
+                  "protocol": "https",
+                  "host": [
+                    "oauth",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "oauth",
+                    "token"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - 📦 Capture transaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_captureId\", response.ratepay_capture_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n  \"shop_transaction_id\": \"shop-transaction-id-1234\",\r\n  \"gross_amount\": 43.8,\r\n  \"items\": [\r\n    {\r\n      \"article_number\": \"kitchen-utils-1\",\r\n      \"category\": \"household\",\r\n      \"description\": \"fruit knife with curved blade, 8 cm\",\r\n      \"gross_total_price\": 33.8,\r\n      \"gross_unit_discount\": -1.55,\r\n      \"gross_unit_price\": 18.45,\r\n      \"name\": \"fruit knife\",\r\n      \"net_total_price\": 28.4,\r\n      \"net_unit_discount\": -1.3,\r\n      \"net_unit_price\": 15.5,\r\n      \"quantity\": 2,\r\n      \"tax_rate\": 19,\r\n      \"unit\": \"piece\"\r\n    }\r\n  ],\r\n  \"special_items\": [\r\n    {\r\n      \"article_number\": \"Shipping\",\r\n      \"category\": \"shipping\",\r\n      \"description\": \"Shipping\",\r\n      \"gross_total_price\": 10,\r\n      \"gross_unit_price\": 10,\r\n      \"name\": \"Shipping\",\r\n      \"net_total_price\": 8.4,\r\n      \"net_unit_price\": 8.4,\r\n      \"quantity\": 1,\r\n      \"tax_rate\": 19,\r\n      \"unit\": \"piece\"\r\n    }\r\n  ],\r\n  \"vats\": [\r\n    {\r\n      \"net_amount\": 36.8,\r\n      \"tax_amount\": 7,\r\n      \"tax_rate\": 19\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/captures",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "captures"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/capture/capturetransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/capture/capturetransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "2 - 🔍 Retrieve all captures",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/captures",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "captures"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/capture/getallcaptures](https://docs.ratepay.com/apis/payment/openapi/payment_api/capture/getallcaptures)"
+              },
+              "response": []
+            },
+            {
+              "name": "3 - 🔍 Retrieve a capture",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/captures/{{paymentApi2_captureId}}",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "captures",
+                    "{{paymentApi2_captureId}}"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/capture/getsinglecapture](https://docs.ratepay.com/apis/payment/openapi/payment_api/capture/getsinglecapture)"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Shipping information",
+          "item": [
+            {
+              "name": "0 - 🔑 Request OAuth token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_oauthToken\", response.access_token);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"client_id\": \"{{paymentApi2_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi2_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi2_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://oauth.ratepay.com/oauth/token",
+                  "protocol": "https",
+                  "host": [
+                    "oauth",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "oauth",
+                    "token"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - 🚚 Add shipping information",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"carrier_name\": \"DHL\",\r\n  \"tracking_number\": \"tracking-123456789\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/captures/{{paymentApi2_captureId}}/shipping-information",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "captures",
+                    "{{paymentApi2_captureId}}",
+                    "shipping-information"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/shipping-information/addshippinginformation](https://docs.ratepay.com/apis/payment/openapi/payment_api/shipping-information/addshippinginformation)"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Refund",
+          "item": [
+            {
+              "name": "0 - 🔑 Request OAuth token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_oauthToken\", response.access_token);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"client_id\": \"{{paymentApi2_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi2_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi2_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n  }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://oauth.ratepay.com/oauth/token",
+                  "protocol": "https",
+                  "host": [
+                    "oauth",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "oauth",
+                    "token"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+              },
+              "response": []
+            },
+            {
+              "name": "1 - 💰 Refund transaction",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "let response = pm.response.json();\r",
+                      "pm.collectionVariables.set(\"paymentApi2_refundId\", response.ratepay_refund_id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n  \"shop_transaction_id\": \"shop-transaction-id-1234\",\r\n  \"gross_amount\": 43.8,\r\n  \"items\": [\r\n    {\r\n      \"article_number\": \"kitchen-utils-1\",\r\n      \"category\": \"household\",\r\n      \"description\": \"fruit knife with curved blade, 8 cm\",\r\n      \"gross_total_price\": 33.8,\r\n      \"gross_unit_discount\": -1.55,\r\n      \"gross_unit_price\": 18.45,\r\n      \"name\": \"fruit knife\",\r\n      \"net_total_price\": 28.4,\r\n      \"net_unit_discount\": -1.3,\r\n      \"net_unit_price\": 15.5,\r\n      \"quantity\": 2,\r\n      \"tax_rate\": 19,\r\n      \"unit\": \"piece\"\r\n    }\r\n  ],\r\n  \"special_items\": [\r\n    {\r\n      \"article_number\": \"Shipping\",\r\n      \"category\": \"shipping\",\r\n      \"description\": \"Shipping\",\r\n      \"gross_total_price\": 10,\r\n      \"gross_unit_price\": 10,\r\n      \"name\": \"Shipping\",\r\n      \"net_total_price\": 8.4,\r\n      \"net_unit_price\": 8.4,\r\n      \"quantity\": 1,\r\n      \"tax_rate\": 19,\r\n      \"unit\": \"piece\"\r\n    }\r\n  ],\r\n  \"vats\": [\r\n    {\r\n      \"net_amount\": 36.8,\r\n      \"tax_amount\": 7,\r\n      \"tax_rate\": 19\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/refunds",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "refunds"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/refund/refundtransaction](https://docs.ratepay.com/apis/payment/openapi/payment_api/refund/refundtransaction)"
+              },
+              "response": []
+            },
+            {
+              "name": "2 - 🔍 Retrieve all refunds",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/refunds",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "refunds"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/refund/getallrefunds](https://docs.ratepay.com/apis/payment/openapi/payment_api/refund/getallrefunds)"
+              },
+              "response": []
+            },
+            {
+              "name": "3 - 🔍 Retrieve a refund",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{paymentApi2_oauthToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Partner",
+                    "value": "{{paymentApi2_xPartner}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api-integration.ratepay.com/transaction/management/v2/transactions/{{paymentApi2_transactionId}}/refunds/{{paymentApi2_refundId}}",
+                  "protocol": "https",
+                  "host": [
+                    "api-integration",
+                    "ratepay",
+                    "com"
+                  ],
+                  "path": [
+                    "transaction",
+                    "management",
+                    "v2",
+                    "transactions",
+                    "{{paymentApi2_transactionId}}",
+                    "refunds",
+                    "{{paymentApi2_refundId}}"
+                  ]
+                },
+                "description": "[https://docs.ratepay.com/apis/payment/openapi/payment_api/refund/getsinglerefund](https://docs.ratepay.com/apis/payment/openapi/payment_api/refund/getsinglerefund)"
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "description": "[https://docs.ratepay.com/docs/developer/api_integration/payment_2.0/payment_api_2.0](https://docs.ratepay.com/docs/developer/api_integration/payment_2.0/payment_api_2.0)"
+    },
+    {
+      "name": "Hosted Payment Page",
+      "item": [
+        {
+          "name": "0 - 🔑 Request OAuth token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "pm.collectionVariables.set(\"paymentApi2_hpp_oauthToken\", response.access_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"client_id\": \"{{paymentApi2_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi2_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi2_hpp_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://oauth.ratepay.com/oauth/token",
+              "protocol": "https",
+              "host": [
+                "oauth",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "oauth",
+                "token"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+          },
+          "response": []
+        },
+        {
+          "name": "1 - 🚀 Create a new session [B2C]",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "pm.collectionVariables.set(\"paymentApi2_hpp_sessionId\", response.session_id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{paymentApi2_hpp_oauthToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Partner",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"order_data\": {\r\n\t  \"buyer\": {\r\n\t\t\"person\": {\r\n\t\t  \"title\": \"Dr.\",\r\n\t\t  \"first_name\": \"Heinz\",\r\n\t\t  \"last_name\": \"Steeger\",\r\n\t\t  \"date_of_birth\": \"1971-05-19\"\r\n\t\t},\r\n\t\t\"billing_address\": {\r\n\t\t  \"city\": \"Berlin\",\r\n\t\t  \"country_code\": \"DE\",\r\n\t\t  \"street\": \"Schönhauser Allee\",\r\n\t\t  \"street_addition\": \"Seitenflügel, 2. HH\",\r\n\t\t  \"street_number\": \"84\",\r\n\t\t  \"zip_code\": \"10439\"\r\n\t\t},\r\n\t\t\"contact\": {\r\n\t\t  \"email\": \"heinz.steeger@example.org\",\r\n\t\t  \"phone\": \"+49 177 4445555\"\r\n\t\t},\r\n\t\t\"language\": \"de\"\r\n\t  },\r\n\t  \"currency\": \"EUR\",\r\n\t  \"delivery\": {\r\n\t\t\"first_name\": \"Heinz\",\r\n\t\t\"last_name\": \"Steeger\",\r\n\t\t\"address\": {\r\n\t\t  \"city\": \"Berlin\",\r\n\t\t  \"country_code\": \"DE\",\r\n\t\t  \"street\": \"Schönhauser Allee\",\r\n\t\t  \"street_addition\": \"Seitenflügel, 2. HH\",\r\n\t\t  \"street_number\": \"84\",\r\n\t\t  \"zip_code\": \"10439\"\r\n\t\t}\r\n\t  },\r\n\t  \"partner_transaction_id\": \"partner-transaction-id-1234\",\r\n\t  \"shop_baskets\": [\r\n\t\t{\r\n\t\t  \"partner_shop_id\": \"{{paymentApi2_partnerShopId}}\",\r\n\t\t  \"gross_amount\": 43.8,\r\n\t\t  \"items\": [\r\n\t\t\t{\r\n\t\t\t  \"article_number\": \"kitchen-utils-1\",\r\n\t\t\t  \"category\": \"household\",\r\n\t\t\t  \"description\": \"fruit knife with curved blade, 8 cm\",\r\n\t\t\t  \"gross_total_price\": 33.8,\r\n\t\t\t  \"gross_unit_discount\": -1.55,\r\n\t\t\t  \"gross_unit_price\": 18.45,\r\n\t\t\t  \"name\": \"fruit knife\",\r\n\t\t\t  \"net_total_price\": 28.4,\r\n\t\t\t  \"net_unit_discount\": -1.3,\r\n\t\t\t  \"net_unit_price\": 15.5,\r\n\t\t\t  \"quantity\": 2,\r\n\t\t\t  \"tax_rate\": 19,\r\n\t\t\t  \"unit\": \"piece\"\r\n\t\t\t}\r\n\t\t  ],\r\n\t\t  \"special_items\": [\r\n\t\t\t{\r\n\t\t\t  \"article_number\": \"Shipping\",\r\n\t\t\t  \"category\": \"shipping\",\r\n\t\t\t  \"description\": \"Shipping\",\r\n\t\t\t  \"gross_total_price\": 10,\r\n\t\t\t  \"gross_unit_price\": 10,\r\n\t\t\t  \"name\": \"Shipping\",\r\n\t\t\t  \"net_total_price\": 8.4,\r\n\t\t\t  \"net_unit_price\": 8.4,\r\n\t\t\t  \"quantity\": 1,\r\n\t\t\t  \"tax_rate\": 19,\r\n\t\t\t  \"unit\": \"piece\"\r\n\t\t\t}\r\n\t\t  ],\r\n\t\t  \"vats\": [\r\n\t\t\t{\r\n\t\t\t  \"net_amount\": 36.8,\r\n\t\t\t  \"tax_amount\": 7,\r\n\t\t\t  \"tax_rate\": 19\r\n\t\t\t}\r\n\t\t  ]\r\n\t\t}\r\n\t  ]\r\n   },\r\n    \"url_data\": {\r\n      \"success_url\": \"https://www.example.io/success\",\r\n      \"cancel_url\": \"https://www.example.io/cancel\",\r\n      \"failure_url\": \"https://www.example.io/failure\",\r\n      \"webhook_url\": \"https://www.example.io/webhook\"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://payment-integration.ratepay.com/pps/api/v1/session",
+              "protocol": "https",
+              "host": [
+                "payment-integration",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "pps",
+                "api",
+                "v1",
+                "session"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/apis/hpp/openapi/hpp_api/session-management-api/createsession](https://docs.ratepay.com/apis/hpp/openapi/hpp_api/session-management-api/createsession)"
+          },
+          "response": []
+        },
+        {
+          "name": "1 - 🚀 Create a new session [B2B]",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "pm.collectionVariables.set(\"paymentApi2_hpp_sessionId\", response.session_id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{paymentApi2_hpp_oauthToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Partner",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"order_data\": {\r\n    \"buyer\": {\r\n        \"company\": {\r\n        \"name\": \"Berlin Advertising Agency\",\r\n        \"vat_id\": \"DE123456789\"\r\n        },\r\n        \"billing_address\": {\r\n        \"city\": \"Berlin\",\r\n        \"country_code\": \"DE\",\r\n        \"street\": \"Schönhauser Allee\",\r\n        \"street_addition\": \"Seitenflügel, 2. HH\",\r\n        \"street_number\": \"84\",\r\n        \"zip_code\": \"10439\"\r\n        },\r\n        \"contact\": {\r\n        \"email\": \"heinz.steeger@example.org\",\r\n        \"phone\": \"+49 177 44455553\"\r\n        },\r\n        \"language\": \"de\"\r\n    },\r\n    \"currency\": \"EUR\",\r\n    \"delivery\": {\r\n        \"company\": \"Berlin Advertising Agency\",\r\n        \"first_name\": \"Heinz\",\r\n        \"last_name\": \"Steeger\",\r\n        \"address\": {\r\n        \"city\": \"Berlin\",\r\n        \"country_code\": \"DE\",\r\n        \"street\": \"Schönhauser Allee\",\r\n        \"street_addition\": \"Seitenflügel, 2. HH\",\r\n        \"street_number\": \"84\",\r\n        \"zip_code\": \"10439\"\r\n        }\r\n    },\r\n    \"partner_transaction_id\": \"partner-transaction-id-1234\",\r\n    \"shop_baskets\": [\r\n        {\r\n        \"partner_shop_id\": \"PROVIDED_BY_RATEPAY_1\",\r\n        \"shop_transaction_id\": \"shop-transaction-id-1234\",\r\n        \"gross_amount\": 43.8,\r\n        \"items\": [\r\n            {\r\n            \"article_number\": \"kitchen-utils-1\",\r\n            \"category\": \"household\",\r\n            \"description\": \"fruit knife with curved blade, 8 cm\",\r\n            \"gross_total_price\": 33.8,\r\n            \"gross_unit_discount\": -1.55,\r\n            \"gross_unit_price\": 18.45,\r\n            \"name\": \"fruit knife\",\r\n            \"net_total_price\": 28.4,\r\n            \"net_unit_discount\": -1.3,\r\n            \"net_unit_price\": 15.5,\r\n            \"quantity\": 2,\r\n            \"tax_rate\": 19,\r\n            \"unit\": \"piece\"\r\n            }\r\n        ],\r\n        \"special_items\": [\r\n            {\r\n            \"article_number\": \"Shipping\",\r\n            \"category\": \"shipping\",\r\n            \"description\": \"Shipping\",\r\n            \"gross_total_price\": 10,\r\n            \"gross_unit_price\": 10,\r\n            \"name\": \"Shipping\",\r\n            \"net_total_price\": 8.4,\r\n            \"net_unit_price\": 8.4,\r\n            \"quantity\": 1,\r\n            \"tax_rate\": 19,\r\n            \"unit\": \"piece\"\r\n            }\r\n        ],\r\n        \"vats\": [\r\n            {\r\n            \"net_amount\": 36.8,\r\n            \"tax_amount\": 7,\r\n            \"tax_rate\": 19\r\n            }\r\n        ]\r\n        }\r\n    ]\r\n  },\r\n  \"url_data\": {\r\n      \"success_url\": \"https://www.example.io/success\",\r\n      \"cancel_url\": \"https://www.example.io/cancel\",\r\n      \"failure_url\": \"https://www.example.io/failure\",\r\n      \"webhook_url\": \"https://www.example.io/webhook\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://payment-integration.ratepay.com/pps/api/v1/session",
+              "protocol": "https",
+              "host": [
+                "payment-integration",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "pps",
+                "api",
+                "v1",
+                "session"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/apis/hpp/openapi/hpp_api/session-management-api/createsession](https://docs.ratepay.com/apis/hpp/openapi/hpp_api/session-management-api/createsession)"
+          },
+          "response": []
+        },
+        {
+          "name": "2 - 🔍 Retrieve a list of session records",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const today = new Date();\r",
+                  "const year = today.getFullYear();\r",
+                  "const month = String(today.getMonth() + 1).padStart(2, '0');\r",
+                  "const day = String(today.getDate()).padStart(2, '0');\r",
+                  "const todayDate = `${year}-${month}-${day}`;\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"todayDate\", todayDate);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{paymentApi2_hpp_oauthToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Partner",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://payment-integration.ratepay.com/pps/api/v1/session-record?createdDate={{todayDate}}",
+              "protocol": "https",
+              "host": [
+                "payment-integration",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "pps",
+                "api",
+                "v1",
+                "session-record"
+              ],
+              "query": [
+                {
+                  "key": "createdDate",
+                  "value": "{{todayDate}}"
+                }
+              ]
+            },
+            "description": "[https://docs.ratepay.com/apis/hpp/openapi/hpp_api/session-records-api/getsessionrecordsbydate](https://docs.ratepay.com/apis/hpp/openapi/hpp_api/session-records-api/getsessionrecordsbydate)"
+          },
+          "response": []
+        },
+        {
+          "name": "3 - 🔍 Retrieve a session record",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{paymentApi2_hpp_oauthToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Partner",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://payment-integration.ratepay.com/pps/api/v1/session-record/{{hpp_sessionId}}",
+              "protocol": "https",
+              "host": [
+                "payment-integration",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "pps",
+                "api",
+                "v1",
+                "session-record",
+                "{{hpp_sessionId}}"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/apis/hpp/openapi/hpp_api/session-records-api/getsessionrecord](https://docs.ratepay.com/apis/hpp/openapi/hpp_api/session-records-api/getsessionrecord)"
+          },
+          "response": []
+        }
+      ],
+      "description": "[https://docs.ratepay.com/docs/developer/hosted_payment_page/overview](https://docs.ratepay.com/docs/developer/hosted_payment_page/overview)"
+    },
+    {
+      "name": "Transaction Status API",
+      "item": [
+        {
+          "name": "0 - 🔑 Request OAuth token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let response = pm.response.json();\r",
+                  "pm.collectionVariables.set(\"paymentApi2_transactionStatusApi_oauthToken\", response.access_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"client_id\": \"{{paymentApi2_oauthClientId}}\",\r\n    \"client_secret\": \"{{paymentApi2_oauthClientSecret}}\",\r\n    \"audience\": \"{{paymentApi2_transactionStatusApi_oauthAudienceURL}}\",\r\n    \"grant_type\": \"client_credentials\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://oauth.ratepay.com/oauth/token",
+              "protocol": "https",
+              "host": [
+                "oauth",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "oauth",
+                "token"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken](https://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken)"
+          },
+          "response": []
+        },
+        {
+          "name": "1 - 🔍 Get transaction status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{paymentApi2_transactionStatusApi_oauthToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api-integration.ratepay.com/transaction/status/v2/transactions/{{paymentApi2_transactionId}}",
+              "protocol": "https",
+              "host": [
+                "api-integration",
+                "ratepay",
+                "com"
+              ],
+              "path": [
+                "transaction",
+                "status",
+                "v2",
+                "transactions",
+                "{{paymentApi2_transactionId}}"
+              ]
+            },
+            "description": "[https://docs.ratepay.com/docs/developer/transaction_status/payment_api_2_0/operations/other/gettransactionstatus](https://docs.ratepay.com/docs/developer/transaction_status/payment_api_2_0/operations/other/gettransactionstatus)"
+          },
+          "response": []
+        }
+      ],
+      "description": "[https://docs.ratepay.com/docs/developer/transaction_status/introduction](https://docs.ratepay.com/docs/developer/transaction_status/introduction)"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "paymentApi2_partnerShopId",
+      "value": "INTEGRATION_TE_DACH",
+      "description": "❗Mandatory, if Payment API 2.0 or Hosted Payment Page is used: partner_shop_id for Payment API 2.0. This value will be provided by your Ratepay representative.\n\nhttps://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction#transaction-management/createtransaction/t=request&path=shop_baskets/partner_shop_id"
+    },
+    {
+      "key": "paymentApi2_xPartner",
+      "value": "",
+      "description": "➕ Optional, if Payment API 2.0 is used & applicable: X-Partner header for Payment API 2.0. This value will be provided by your Ratepay representative.\n\nhttps://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction#transaction-management/createtransaction/t=request&in=header&path=x-partner"
+    },
+    {
+      "key": "paymentApi2_oauthClientId",
+      "value": "snbFcxD4Rxt2O4YqeGqDls9yrGWYhmQ0",
+      "description": "❗Mandatory, if Payment API 2.0, Hosted Payment Page, Transaction Status API is used: Part of OAuth authorization. This value will be provided by your Ratepay representative.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=request&path=client_id"
+    },
+    {
+      "key": "paymentApi2_oauthClientSecret",
+      "value": "IHa7jiW0hMlH0VsoxDTZ03XH76NED7RwFvJLsmmUXg9fkowhiVQqp7EA84WoYT1Q",
+      "description": "❗Mandatory, if Payment API 2.0, Hosted Payment Page, Transaction Status API is used: Part of OAuth authorization. This value will be provided by your Ratepay representative.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=request&path=client_secret"
+    },
+    {
+      "key": "paymentApi2_oauthToken",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Request OAuth token\" requests in the \"Payment API 2.0\" folder. \nMandatory, if Payment API 2.0, Hosted Payment Page, One Time Passcode API, Transaction Status API is used: Part of OAuth authorization.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=response&c=200&path=access_token"
+    },
+    {
+      "key": "paymentApi2_hpp_oauthAudienceURL",
+      "value": "https://payment-integration.ratepay.com",
+      "description": "❗Mandatory, if Hosted Payment Page is used: Part of OAuth authorization.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=request&path=audience"
+    },
+    {
+      "key": "paymentApi2_transactionStatusApi_oauthAudienceURL",
+      "value": "https://api-integration.ratepay.com/transaction/status/v2/transactions",
+      "description": "❗Mandatory, if Transaction Status API is used: Part of OAuth authorization.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=request&path=audience"
+    },
+    {
+      "key": "paymentApi2_oauthAudienceURL",
+      "value": "https://api-integration.ratepay.com/transaction/management",
+      "description": "❗Mandatory, if Payment API 2.0 is used: Part of OAuth authorization.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=request&path=audience"
+    },
+    {
+      "key": "paymentApi2_hpp_oauthToken",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Request OAuth token\" requests in the \"Hosted Payment Page\" folder. \nMandatory, if Hosted Payment Page is used: Part of OAuth authorization.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=response&c=200&path=access_token"
+    },
+    {
+      "key": "paymentApi2_transactionStatusApi_oauthToken",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Request OAuth token\" requests in the \"Transaction Status API\" folder. \nMandatory, if Transaction Status API is used: Part of OAuth authorization.\n\nhttps://docs.ratepay.com/apis/authentication/openapi/authentication_api/other/createoauthtoken#other/createoauthtoken/t=response&c=200&path=access_token"
+    },
+    {
+      "key": "paymentApi2_transactionId",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Authorize transaction\" requests in the \"Payment API 2.0 > Transaction management\" folder. \nMandatory for follow up operations with Payment API 2.0.\n\nhttps://docs.ratepay.com/apis/payment/openapi/payment_api/transaction-management/createtransaction#transaction-management/createtransaction/t=response&c=201&path=ratepay_transaction_id"
+    },
+    {
+      "key": "paymentApi2_authorizationId",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Incrementally authorize transaction\" requests in the \"Payment API 2.0 > Incremental authorize\" folder. \nMandatory for Get authorization requests with Payment API 2.0.\nhttps://docs.ratepay.com/apis/payment/openapi/payment_api/incremental-authorization/incrementalauthorizationtransaction#incremental-authorization/incrementalauthorizationtransaction/t=response&c=201&path=ratepay_authorization_id"
+    },
+    {
+      "key": "paymentApi2_cancellationId",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Cancel transaction\" requests in the \"Payment API 2.0 > Cancellation\" folder. \nMandatory for Get cancellation requests with Payment API 2.0.\n\nhttps://docs.ratepay.com/apis/payment/openapi/payment_api/cancellation/canceltransaction#cancellation/canceltransaction/t=response&c=201&path=&oneof=0/ratepay_cancellation_id"
+    },
+    {
+      "key": "paymentApi2_captureId",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Capture transaction\" requests in the \"Payment API 2.0 > Capture\" folder. \nMandatory for Get capture requests with Payment API 2.0.\n\nhttps://docs.ratepay.com/apis/payment/openapi/payment_api/capture/capturetransaction#capture/capturetransaction/t=response&c=201&path=&oneof=0/ratepay_capture_id"
+    },
+    {
+      "key": "paymentApi2_refundId",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Refund transaction\" requests in the \"Payment API 2.0 > Refund\" folder. \nMandatory for Get refund requests with Payment API 2.0.\n\nhttps://docs.ratepay.com/apis/payment/openapi/payment_api/capture/capturetransaction#capture/capturetransaction/t=response&c=201&path=&oneof=0/ratepay_capture_id"
+    },
+    {
+      "key": "paymentApi2_hpp_sessionId",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Create new session\" requests in the \"Hosted Payment Page\" folder. \nMandatory for Get requests with Hosted Payment Page.\n\nhttps://docs.ratepay.com/apis/hpp/openapi/hpp_api/session-management-api/createsession#session-management-api/createsession/t=response&c=201&path=session_id"
+    },
+    {
+      "key": "todayDate",
+      "value": "",
+      "description": "🔄 Temporary - Filled out automatically by \"Retrieve\" requests in the \"Hosted Payment Page\" folder."
+    }
+  ]
+}
