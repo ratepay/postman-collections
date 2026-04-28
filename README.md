@@ -8,6 +8,7 @@ The collections cover common payment flows and can be used as a reference or sta
 
 - **Payment API 2.0 (JSON)**
   - Authorization
+  - One Time Passcode (Validate & Regenerate)
   - Capture
   - Refund
   - Cancellation
@@ -25,9 +26,6 @@ The collections cover common payment flows and can be used as a reference or sta
 - **Hosted Payment Page (HPP)**
   - Create session
   - Receive session record(s)
-- **One Time Passcode (OTP) API**
-  - Validate an OTP code
-  - Regenerate OTP code
 - **Transaction Status API**
   - Get order status
 
